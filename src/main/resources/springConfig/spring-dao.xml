@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!--配置整合MyBatis过程-->
+
+    <!--1、配置数据库相关参数 properties的属性:${url} -->
+    <context:property-placeholder location="classpath:*.properties"></context:property-placeholder>
+    <!--2、配置数据库连接池-->
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
+        <property name="url" value="${mysql.jdbc.url}"/>
+        <property name="username" value="${mysql.jdbc.username}"/>
+        <property name="password" value="${mysql.jdbc.password}"/>
+        <property name="driverClassName" value="${mysql.jdbc.driver}"/>
+        <!-- 最大并发连接数 -->
+        <property name="maxActive" value="30"/>
+        <!-- 最小空闲连接数 -->
+        <property name="minIdle" value="5"/>
+        <!-- 用于显示数据源监控中的sql语句监控 -->
+        <property name="filters" value="stat"/>
+    </bean>
+
+    <!--3、配置sqlSessionFactory对象-->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!--注入数据库连接池-->
+        <property name="dataSource" ref="dataSource"></property>
+        <!--配置MyBatis全局配置文件：mybatis-config.xml-->
+        <property name="configLocation" value="classpath:mybatis-config.xml"></property>
+        <!--扫描entity包 使用别名-->
+        <property name="typeAliasesPackage" value="org.seckill.entity"></property>
+        <!--扫描sql配置文件：mapper需要的XML文件-->
+        <property name="mapperLocations" value="classpath:mapper/*.xml"></property>
+    </bean>
+
+    <!--4、配置扫描Dao接口包，动态实现Dao接口，注入到spring容器中-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <!--注入sqlSessionFactory-->
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
+        <!--给出需要扫描Dao接口包-->
+        <property name="basePackage" value="org.seckill.dao"></property>
+    </bean>
+
+</beans>
+
+
