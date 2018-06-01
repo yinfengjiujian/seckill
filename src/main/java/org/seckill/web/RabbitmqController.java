@@ -68,8 +68,9 @@ public class RabbitmqController {
 
             String msgId = mailProducer.getMsgId();
             Message message = mailProducer.messageBuil(seckill,msgId);
-            mailProducer.sendDataToRabbitMQ(queue_key, message);
-
+            if (message != null) {
+                mailProducer.sendDataToRabbitMQ(queue_key, message);
+            }
             result = new SeckillResult<Long>(true, now.getTime());
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
