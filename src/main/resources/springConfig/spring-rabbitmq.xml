@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/rabbit http://www.springframework.org/schema/rabbit/spring-rabbit.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <description>rabbitmq消息队列配置</description>
+
+    <!--属性配置properties文件加载-->
+    <context:property-placeholder location="classpath:rabbitmq.properties"
+                                  ignore-unresolvable="true"></context:property-placeholder>
+
+    <!-- rabbitmq消息队列连接配置 -->
+    <rabbit:connection-factory id="connectionFactory"
+                               host="${rabbitmq.study.host}"
+                               username="${rabbitmq.study.username}"
+                               password="${rabbitmq.study.password}"
+                               port="${rabbitmq.study.port}"
+                               publisher-confirms="true"/>
+
+    <rabbit:admin connection-factory="connectionFactory"/>
+    <!-- 消息对象json转换类 -->
+    <bean id="jsonMessageConverter" class="org.springframework.amqp.support.converter.Jackson2JsonMessageConverter"/>
+
+
+    <!--申明一个消息队列Queue __> 用于发送Mail************************************Start************************-->
+    <!--
+    说明：
+        durable:是否持久化
+        exclusive: 仅创建者可以使用的私有队列，断开后自动删除
+        auto_delete: 当所有消费客户端连接断开后，是否自动删除队列
+    -->
+    <rabbit:queue id="mailQueue" name="mailQueue" durable="true" auto-delete="false" exclusive="false"/>
+
+    <!--交换机定义
+        交换机的四种模式：
+        direct：转发消息到 routigKey 指定的队列。
+        topic：对 key 进行模式匹配，比如ab*可以传到到所有 ab* 的 queue。
+        headers：（这个还没有接触到）
+        fanout：转发消息到所有绑定队列，忽略 routigKey
+        交换器的属性：
+        持久性：如果启用，交换器将会在server重启前都有效。
+        自动删除：如果启用，那么交换器将会在其绑定的队列都被删除掉之后自动删除掉自身。
+        惰性：如果没有声明交换器，那么在执行到使用的时候会导致异常，并不会主动声明。
+     -->
+    <rabbit:direct-exchange id="mailExchange" name="mailExchange" durable="true" auto-delete="false">
+        <rabbit:bindings>
+            <rabbit:binding queue="mailQueue" key="mail_queue_key"/>
+        </rabbit:bindings>
+    </rabbit:direct-exchange>
+
+    <!-- 消费者 -->
+    <bean id="mailConsumerListener" class="org.seckill.rabbitmqListener.mail.MailConsumerListener"></bean>
+    <!--消息确认后回调方法-->
+    <bean id="mailConfirmCallBackListener" class="org.seckill.rabbitmqListener.mail.MailConfirmCallBackListener"></bean>
+    <!--消息失败后Return回调-->
+    <bean id="mailFailedCallBackListener" class="org.seckill.rabbitmqListener.mail.MailFailedCallBackListener"></bean>
+
+    <!-- spring template声明-->
+    <rabbit:template id="mailRabbitTemplate" exchange="mailExchange" mandatory="true"
+                     message-converter="jsonMessageConverter"
+                     confirm-callback="mailConfirmCallBackListener"
+                     return-callback="mailFailedCallBackListener"
+                     connection-factory="connectionFactory"/>
+
+    <!-- 配置监听 -->
+    <rabbit:listener-container connection-factory="connectionFactory" acknowledge="manual">
+        <!--queues 监听队列，多个用逗号分隔 ref 监听器 -->
+        <rabbit:listener queues="mailQueue" ref="mailConsumerListener"></rabbit:listener>
+    </rabbit:listener-container>
+    <!--申明一个消息队列Queue __> 用于发送Mail************************************End************************-->
+
+
+
+
+    <!--===============================================分割线==================================================-->
+
+
+
+    <!--申明一个用于发送短信的消息队列__>用于发送短信Phone************************************Start************************-->
+    <!--
+    说明：
+        durable:是否持久化
+        exclusive: 仅创建者可以使用的私有队列，断开后自动删除
+        auto_delete: 当所有消费客户端连接断开后，是否自动删除队列
+    -->
+    <rabbit:queue id="PhoneQueueOne" name="PhoneQueueOne" durable="true" auto-delete="false" exclusive="false"/>
+    <rabbit:queue id="PhoneQueueTwo" name="PhoneQueueTwo" durable="true" auto-delete="false" exclusive="false"/>
+
+    <!--交换机定义
+        交换机的四种模式：
+        direct：转发消息到 routigKey 指定的队列。
+        topic：对 key 进行模式匹配，比如ab*可以传到到所有 ab* 的 queue。
+        headers：（这个还没有接触到）
+        fanout：转发消息到所有绑定队列，忽略 routigKey
+        交换器的属性：
+        持久性：如果启用，交换器将会在server重启前都有效。
+        自动删除：如果启用，那么交换器将会在其绑定的队列都被删除掉之后自动删除掉自身。
+        惰性：如果没有声明交换器，那么在执行到使用的时候会导致异常，并不会主动声明。
+     -->
+    <rabbit:topic-exchange id="phoneExchange" name="phoneExchange" durable="true" auto-delete="false">
+        <rabbit:bindings>
+            <rabbit:binding queue="PhoneQueueOne" pattern="phone.*"></rabbit:binding>
+            <rabbit:binding queue="PhoneQueueTwo" pattern="phone.#"></rabbit:binding>
+        </rabbit:bindings>
+    </rabbit:topic-exchange>
+
+    <!-- 消费者 -->
+    <bean id="phoneConsumerListener" class="org.seckill.rabbitmqListener.phone.PhoneConsumerListener"></bean>
+    <bean id="phoneConsumerListenerMore" class="org.seckill.rabbitmqListener.phone.PhoneConsumerListenerMore"></bean>
+    <!--消息确认后回调方法-->
+    <bean id="phoneConfirmCallBackListener" class="org.seckill.rabbitmqListener.phone.PhoneConfirmCallBackListener"></bean>
+    <!--消息失败后Return回调-->
+    <bean id="phoneFailedCallBackListener" class="org.seckill.rabbitmqListener.phone.PhoneFailedCallBackListener"></bean>
+
+    <!-- spring template声明-->
+    <rabbit:template id="phoneRabbitTemplate" exchange="phoneExchange" mandatory="true"
+                     message-converter="jsonMessageConverter"
+                     confirm-callback="phoneConfirmCallBackListener"
+                     return-callback="phoneFailedCallBackListener"
+                     connection-factory="connectionFactory"/>
+
+    <!-- 配置监听 -->
+    <rabbit:listener-container connection-factory="connectionFactory" acknowledge="manual">
+        <!--queues 监听队列，多个用逗号分隔 ref 监听器 -->
+        <rabbit:listener queues="PhoneQueueOne" ref="phoneConsumerListener"></rabbit:listener>
+        <rabbit:listener queues="PhoneQueueOne,PhoneQueueTwo" ref="phoneConsumerListenerMore"></rabbit:listener>
+    </rabbit:listener-container>
+    <!--申明一个用于发送短信的消息队列__>用于发送短信Phone************************************End************************-->
+
+
+</beans>

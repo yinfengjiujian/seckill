@@ -9,7 +9,7 @@
     <!-- 以前项目中的配置，注意需要添加Spring Data Redis等jar包 -->
     <description>redis配置</description>
 
-    <context:property-placeholder location="classpath:redis.properties"></context:property-placeholder>
+    <context:property-placeholder location="classpath:redis.properties" ignore-unresolvable="true"></context:property-placeholder>
 
     <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
         <property name="maxIdle" value="${redis.pool.maxIdle}"/>
