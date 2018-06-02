@@ -3,6 +3,7 @@ package org.seckill.utils.rabbitmq.Impl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.seckill.entity.Seckill;
+import org.seckill.utils.rabbitmq.MQProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,18 +30,18 @@ public class MailProducerImplTest {
     final String queue_key = "study_queue_key";
 
     @Autowired
-    private MailProducerImpl mqProducer;
+    private MQProducer mailMQProducerImpl;
 
     @Test
     public void sendDataToQueue() {
         Map<String,Object> msg = new HashMap();
         msg.put("data","hello,rabbmitmq!");
-        mqProducer.sendDataToRabbitMQ(queue_key,msg);
+        mailMQProducerImpl.sendDataToRabbitMQ(queue_key,msg);
 
         Seckill seckill = new Seckill();
         seckill.setName("duanml");
         seckill.setSeckillId(102020239);
-        mqProducer.sendDataToRabbitMQ(queue_key,seckill);
+        mailMQProducerImpl.sendDataToRabbitMQ(queue_key,seckill);
 
     }
 }

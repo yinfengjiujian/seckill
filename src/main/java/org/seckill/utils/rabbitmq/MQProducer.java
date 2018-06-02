@@ -1,5 +1,6 @@
 package org.seckill.utils.rabbitmq;
 
+import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessagePostProcessor;
 import org.springframework.amqp.rabbit.support.CorrelationData;
 
@@ -112,4 +113,8 @@ public interface MQProducer {
      * @param correlationData
      */
     void sendDataToRabbitMQ(java.lang.String exchange, java.lang.String routingKey, java.lang.Object message, MessagePostProcessor messagePostProcessor, CorrelationData correlationData);
+
+    Message messageBuil(Object handleObject, String msgId);
+
+    String getMsgId();
 }

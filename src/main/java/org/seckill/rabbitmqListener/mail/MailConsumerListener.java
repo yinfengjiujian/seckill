@@ -20,6 +20,9 @@ public class MailConsumerListener implements ChannelAwareMessageListener {
 
     public void onMessage(Message message, Channel channel) throws Exception {
         try {
+            //将字节流对象转换成Java对象
+//            Person person=(Person) new ObjectInputStream(new ByteArrayInputStream(message.getBody())).readObject();
+
             logger.info("mail--消费开始----->consumer--:" + message.getMessageProperties() + ":" + new String(message.getBody(),"UTF-8"));
 
 

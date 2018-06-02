@@ -32,7 +32,6 @@
         auto_delete: 当所有消费客户端连接断开后，是否自动删除队列
     -->
     <rabbit:queue id="mailQueue" name="mailQueue" durable="true" auto-delete="false" exclusive="false"/>
-
     <!--交换机定义
         交换机的四种模式：
         direct：转发消息到 routigKey 指定的队列。
@@ -64,7 +63,13 @@
                      return-callback="mailFailedCallBackListener"
                      connection-factory="connectionFactory"/>
 
+    <!--Mail消息生产者操作对象-->
+    <bean id="mailMQProducerImpl" class="org.seckill.utils.rabbitmq.Impl.MQProducerImpl">
+        <property name="rabbitTemplate" ref="mailRabbitTemplate"></property>
+    </bean>
+
     <!-- 配置监听 -->
+    <!-- 监听器acknowledge=manual表示手工确认消息已处理（异常时可以不确认消息），auto表示自动确认（只要不抛出异常，消息就会被消费） -->
     <rabbit:listener-container connection-factory="connectionFactory" acknowledge="manual">
         <!--queues 监听队列，多个用逗号分隔 ref 监听器 -->
         <rabbit:listener queues="mailQueue" ref="mailConsumerListener"></rabbit:listener>
@@ -121,13 +126,17 @@
                      return-callback="phoneFailedCallBackListener"
                      connection-factory="connectionFactory"/>
 
+    <!--phone消息生产者操作对象-->
+    <bean id="phoneMQProducerImpl" class="org.seckill.utils.rabbitmq.Impl.MQProducerImpl">
+        <property name="rabbitTemplate" ref="phoneRabbitTemplate"></property>
+    </bean>
     <!-- 配置监听 -->
+    <!-- 监听器acknowledge=manual表示手工确认消息已处理（异常时可以不确认消息），auto表示自动确认（只要不抛出异常，消息就会被消费） -->
     <rabbit:listener-container connection-factory="connectionFactory" acknowledge="manual">
         <!--queues 监听队列，多个用逗号分隔 ref 监听器 -->
         <rabbit:listener queues="PhoneQueueOne" ref="phoneConsumerListener"></rabbit:listener>
         <rabbit:listener queues="PhoneQueueOne,PhoneQueueTwo" ref="phoneConsumerListenerMore"></rabbit:listener>
     </rabbit:listener-container>
     <!--申明一个用于发送短信的消息队列__>用于发送短信Phone************************************End************************-->
-
 
 </beans>

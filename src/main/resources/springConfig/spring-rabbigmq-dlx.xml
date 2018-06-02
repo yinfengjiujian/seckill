@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/rabbit http://www.springframework.org/schema/rabbit/spring-rabbit.xsd">
+
+    <!-- ################ 订单通知服务消费者配置 ################ -->
+    <!-- 队列声明 -->
+    <!--<rabbit:queue id="queue_Notify" name="queue_Notify" durable="true" auto-delete="false" exclusive="false"/>-->
+
+    <!--&lt;!&ndash; work exchange &ndash;&gt;-->
+    <!--<rabbit:direct-exchange name="trade_direct" durable="true" auto-delete="false">-->
+        <!--<rabbit:bindings>-->
+            <!--<rabbit:binding queue="queue_TestNotify" key="routeKey_TradePayNotify"/>-->
+        <!--</rabbit:bindings>-->
+    <!--</rabbit:direct-exchange>-->
+
+    <!--&lt;!&ndash; 监听处理器 &ndash;&gt;-->
+    <!--<bean id="tradePayNotifyListener" class="test.prj.main.rabbit.TradePayNotifyListener"/>-->
+
+    <!--&lt;!&ndash; 监听器acknowledge=manual表示手工确认消息已处理（异常时可以不确认消息），auto表示自动确认（只要不抛出异常，消息就会被消费） &ndash;&gt;-->
+    <!--<rabbit:listener-container connection-factory="connectionFactory" acknowledge="manual">-->
+        <!--<rabbit:listener queues="queue_TestNotify" ref="tradePayNotifyListener" method="onMessage"/>-->
+    <!--</rabbit:listener-container>-->
+
+    <!--&lt;!&ndash;*****************************************分割线*********************************************************&ndash;&gt;-->
+
+    <!--&lt;!&ndash; ################ 延迟队列生产者配置 ################ &ndash;&gt;-->
+    <!--<rabbit:admin connection-factory="connectionFactory"/>-->
+    <!--<bean id="jsonMessageConverter" class="org.springframework.amqp.support.converter.Jackson2JsonMessageConverter"/>-->
+    <!--<rabbit:template id="rabbitTemplateDelay" connection-factory="connectionFactory" exchange="trade_direct_delay"-->
+                     <!--message-converter="jsonMessageConverter"/>-->
+
+    <!--<rabbit:queue id="queue_TestNotify_delay_15s" name="queue_TestNotify_delay_15s" durable="true" auto-delete="false"-->
+                  <!--exclusive="false">-->
+        <!--<rabbit:queue-arguments>-->
+            <!--<entry key="x-message-ttl" value="15000" value-type="java.lang.Long"/>-->
+            <!--<entry key="x-dead-letter-exchange" value="trade_direct"/>-->
+            <!--<entry key="x-dead-letter-routing-key" value="routeKey_TradePayNotify"/>-->
+        <!--</rabbit:queue-arguments>-->
+    <!--</rabbit:queue>-->
+
+    <!--<rabbit:queue id="queue_TestNotify_delay_30s" name="queue_TestNotify_delay_30s" durable="true" auto-delete="false"-->
+                  <!--exclusive="false">-->
+        <!--<rabbit:queue-arguments>-->
+            <!--<entry key="x-message-ttl" value="30000" value-type="java.lang.Long"/>-->
+            <!--<entry key="x-dead-letter-exchange" value="trade_direct"/>-->
+            <!--<entry key="x-dead-letter-routing-key" value="routeKey_TradePayNotify"/>-->
+        <!--</rabbit:queue-arguments>-->
+    <!--</rabbit:queue>-->
+
+    <!--&lt;!&ndash; delay exchange &ndash;&gt;-->
+    <!--<rabbit:direct-exchange name="trade_direct_delay" durable="true" auto-delete="false">-->
+        <!--<rabbit:bindings>-->
+            <!--<rabbit:binding queue="queue_TestNotify_delay_15s" key="routeKey_TradePayNotify_delay_15s"/>-->
+            <!--<rabbit:binding queue="queue_TestNotify_delay_30s" key="routeKey_TradePayNotify_delay_30s"/>-->
+        <!--</rabbit:bindings>-->
+    <!--</rabbit:direct-exchange>-->
+
+
+</beans>

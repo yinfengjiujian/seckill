@@ -1,17 +1,12 @@
 package org.seckill.web;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import org.seckill.dto.SeckillResult;
 import org.seckill.entity.Seckill;
-import org.seckill.utils.rabbitmq.Impl.MailProducerImpl;
-import org.seckill.utils.rabbitmq.Impl.PhoneProducerImpl;
+import org.seckill.utils.rabbitmq.Impl.MQProducerImpl;
+import org.seckill.utils.rabbitmq.MQProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
-import org.springframework.amqp.core.MessageBuilder;
-import org.springframework.amqp.core.MessageProperties;
-import org.springframework.amqp.rabbit.support.CorrelationData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -19,8 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Date;
-import java.util.HashMap;
-import java.util.UUID;
 
 /**
  * <p>Title: org.seckill.web</p>
@@ -46,10 +39,10 @@ public class RabbitmqController {
     private String phone_key;
 
     @Autowired
-    private MailProducerImpl mailProducer;
+    private MQProducerImpl mailMQProducerImpl;
 
     @Autowired
-    private PhoneProducerImpl phoneProducer;
+    private MQProducerImpl phoneMQProducerImpl;
 
     /**
      * @Description: 消息队列
@@ -65,11 +58,13 @@ public class RabbitmqController {
             Seckill seckill = new Seckill();
             seckill.setSeckillId(193393287);
             seckill.setName("段美林");
+            seckill.setNumber(200);
 
-            String msgId = mailProducer.getMsgId();
-            Message message = mailProducer.messageBuil(seckill,msgId);
+            String msgId = mailMQProducerImpl.getMsgId();
+            Message message = mailMQProducerImpl.messageBuil(seckill,msgId);
             if (message != null) {
-                mailProducer.sendDataToRabbitMQ(queue_key, message);
+                message.getMessageProperties().setExpiration(String.valueOf(1800000));
+                mailMQProducerImpl.sendDataToRabbitMQ(queue_key, message);
             }
             result = new SeckillResult<Long>(true, now.getTime());
         } catch (Exception e) {
@@ -94,9 +89,9 @@ public class RabbitmqController {
             for (int i = 0; i < 10; i++) {
                 seckill.setSeckillId(1922339387 + i);
                 seckill.setName("caijuan" + i);
-                String msgId = phoneProducer.getMsgId();
-                Message message = phoneProducer.messageBuil(seckill,msgId);
-                phoneProducer.sendDataToRabbitMQ(phone_key, message);
+                String msgId = phoneMQProducerImpl.getMsgId();
+                Message message = phoneMQProducerImpl.messageBuil(seckill,msgId);
+                phoneMQProducerImpl.sendDataToRabbitMQ(phone_key, message);
             }
             result = new SeckillResult<Long>(true, now.getTime());
         } catch (Exception e) {
