@@ -11,8 +11,8 @@
 <head>
     <title>Title</title>
     <link rel="stylesheet" href="/resources/static/bootstrap/css/bootstrap.min.css">
-    <script type="text/javascript" src="/resources/static/jquery-3.3.1/jquery-3.3.1.js"></script>
-    <script type="text/javascript" src="/resources/static/bootstrap/js/bootstrap.js"></script>
+    <script type="text/javascript" src="/resources/static/jquery-3.3.1/jquery-3.3.1.js?ver=<%=Math.random()%>"></script>
+    <script type="text/javascript" src="/resources/static/bootstrap/js/bootstrap.js?ver=<%=Math.random()%>"></script>
 </head>
 <body>
 

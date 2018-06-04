@@ -57,19 +57,17 @@
 </div>
 </body>
 <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
-<script src="/resources/static/jquery-3.3.1/jquery-3.3.1.js"></script>
+<script src="/resources/static/jquery-3.3.1/jquery-3.3.1.js?ver=<%=Math.random()%>"></script>
 <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
-<script src="/resources/static/bootstrap/js/bootstrap.js"
-        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-        crossorigin="anonymous"></script>
+<script src="/resources/static/bootstrap/js/bootstrap.js?ver=<%=Math.random()%>"></script>
 <!-- 使用CDN 获取公共JS http://www.bootcdn.cn/ -->
 <!-- jQuery cookie 操作插件 -->
-<script src="/resources/static/jquery-3.3.1/jquery.cookie.js"></script>
+<script src="/resources/static/jquery-3.3.1/jquery.cookie.js?ver=<%=Math.random()%>"></script>
 <!-- jQuery countDown 倒计时操作插件 -->
-<script src="/resources/static/jquery-3.3.1/jquery.countdown.js"></script>
+<script src="/resources/static/jquery-3.3.1/jquery.countdown.js?ver=<%=Math.random()%>"></script>
 
 <!--开始编写JS交互逻辑-->
-<script src="/resources/web-script/seckill.js" type="text/javascript"></script>
+<script src="/resources/web-script/seckill.js?ver=<%=Math.random()%>" type="text/javascript"></script>
 <script type="text/javascript">
     $(function () {
         //使用EL表达式传入参数

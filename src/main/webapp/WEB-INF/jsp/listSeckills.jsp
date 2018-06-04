@@ -56,8 +56,8 @@
         </div>
     </div>
 <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
-<script src="/resources/static/jquery-3.3.1/jquery-3.3.1.js"></script>
+<script src="/resources/static/jquery-3.3.1/jquery-3.3.1.js?ver=<%=Math.random()%>"></script>
 <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
-<script src="/resources/static/bootstrap/js/bootstrap.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="/resources/static/bootstrap/js/bootstrap.js?ver=<%=Math.random()%>"></script>
 </body>
 </html>
