@@ -37,7 +37,7 @@ public class OrderController {
     @ResponseBody
     public SeckillResult<TOrder0> getList() {
         SeckillResult<TOrder0> result;
-        Long order_id = 11L;
+        Long order_id = 3238L;
         TOrder0 order = null;
         try {
             order = orderService.getOrderById(order_id);
@@ -46,6 +46,24 @@ public class OrderController {
             logger.error(e.getMessage(), e);
             return null;
         }
+        return result;
+    }
+
+    /**
+     * 获取秒杀对象的列表
+     *
+     * @return
+     */
+    @RequestMapping(value = "/insert", method = RequestMethod.GET)
+    @ResponseBody
+    public SeckillResult<TOrder0> insertT() {
+        SeckillResult<TOrder0> result;
+        TOrder0 tOrder0 = new TOrder0();
+        tOrder0.setOrderId(3239L);
+        tOrder0.setUserId(20);
+        tOrder0.setStatus("1");
+        orderService.insert(tOrder0);
+        result = new SeckillResult<TOrder0>(true, tOrder0);
         return result;
     }
 

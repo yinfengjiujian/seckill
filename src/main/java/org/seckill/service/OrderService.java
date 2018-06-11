@@ -13,4 +13,6 @@ import org.seckill.entity.TOrder0;
 public interface OrderService {
 
     TOrder0 getOrderById(Long order_id);
+
+    int insert(TOrder0 record);
 }

@@ -27,4 +27,8 @@ public class OrderServiceImpl implements OrderService {
     public TOrder0 getOrderById(Long order_id) {
         return tOrder0Mapper.selectByPrimaryKey(order_id);
     }
+
+    public int insert(TOrder0 record) {
+        return tOrder0Mapper.insert(record);
+    }
 }
