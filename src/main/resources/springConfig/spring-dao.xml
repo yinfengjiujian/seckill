@@ -9,11 +9,24 @@
     <!--1、配置数据库相关参数 properties的属性:${url} -->
     <context:property-placeholder location="classpath:jdbc.properties" ignore-unresolvable="true"></context:property-placeholder>
     <!--2、配置数据库连接池-->
-    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
-        <property name="url" value="${mysql.jdbc.url}"/>
-        <property name="username" value="${mysql.jdbc.username}"/>
-        <property name="password" value="${mysql.jdbc.password}"/>
-        <property name="driverClassName" value="${mysql.jdbc.driver}"/>
+    <bean id="demo_ds_0" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
+        <property name="url" value="${mysql.jdbc.url.one}"/>
+        <property name="username" value="${mysql.jdbc.username.one}"/>
+        <property name="password" value="${mysql.jdbc.password.one}"/>
+        <property name="driverClassName" value="${mysql.jdbc.driver.one}"/>
+        <!-- 最大并发连接数 -->
+        <property name="maxActive" value="30"/>
+        <!-- 最小空闲连接数 -->
+        <property name="minIdle" value="5"/>
+        <!-- 用于显示数据源监控中的sql语句监控 -->
+        <property name="filters" value="stat"/>
+    </bean>
+
+    <bean id="demo_ds_1" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
+        <property name="url" value="${mysql.jdbc.url.two}"/>
+        <property name="username" value="${mysql.jdbc.username.two}"/>
+        <property name="password" value="${mysql.jdbc.password.two}"/>
+        <property name="driverClassName" value="${mysql.jdbc.driver.two}"/>
         <!-- 最大并发连接数 -->
         <property name="maxActive" value="30"/>
         <!-- 最小空闲连接数 -->
@@ -25,7 +38,7 @@
     <!--3、配置sqlSessionFactory对象-->
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <!--注入数据库连接池-->
-        <property name="dataSource" ref="dataSource"></property>
+        <property name="dataSource" ref="shardingDataSource"></property>
         <!--配置MyBatis全局配置文件：mybatis-config.xml-->
         <property name="configLocation" value="classpath:mybatis-config.xml"></property>
         <!--扫描entity包 使用别名-->

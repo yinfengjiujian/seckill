@@ -12,10 +12,9 @@
         <appender-ref ref="STDOUT" />
     </root>
 
-    <!--打印输入SQL日志-->
     <logger name="dao" level="DEBUG">
-        <!--daoFILE为实际定义的appender-->
-        <appender-ref ref="daoFILE" />
+        <!--STDOUT为实际定义的appender-->
+        <appender-ref ref="STDOUT" />
     </logger>
 
 </configuration>
