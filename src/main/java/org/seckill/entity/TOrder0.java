@@ -1,6 +1,8 @@
 package org.seckill.entity;
 
-public class TOrder0 {
+import java.io.Serializable;
+
+public class TOrder0 implements Serializable{
     private Long orderId;
 
     private Integer userId;
